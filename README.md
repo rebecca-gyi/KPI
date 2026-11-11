@@ -1,16 +1,20 @@
-# KPI
+# KPI – motor quote tracking
 
-## Motor quote submissions dashboard
+- `data/rraw.txt` – Rabies Reference quotes: `No|PLATE|Category|DD/MM/YYYY` joined by `;`
+- `data/s1.txt` – Sheet1 payouts: `SN|PLATE|Quoted|Settled|Amount|Remarks` joined by `;`
+- `data/row_order.txt` – plates in Rabies Reference row order (used for the No column)
+- `data/quotes.csv`, `data/payouts.csv`, `data/emails.csv` – generated dashboard data
+- `scripts/mk.py` → builds `quotes.csv`; `scripts/mkpay.py` → builds `payouts.csv`
+- `dashboard/index.html` – the dashboard page (runs inside the Claude Dashboard artifact, reads the three CSVs)
 
-Source: the "Motor quote submissions" dashboard (Claude artifact), exported as of 11 Nov 2026.
-
-- `dashboard/index.html`: the dashboard page (HTML, CSS and the calculations/charts). It is a fragment for the artifact dashboard runtime (`dash.calc`, `dash.onData`, `d3`), so it will not render standalone in a browser.
-- `dashboard/datasets.json`: which data file feeds which dataset id used by the page.
-- `dashboard/data/*.csv`: the three data snapshots (`quotes`, `payouts`, `emails`).
-
-What it tracks: quotes per day/week/month against a target of 10 a day, accuracy (right vs wrong), income from the payout sheet ($18 per verified quote, $6 with errors, -$12 clawbacks, plus commission), split by vehicle type, plus reply speed to Keith's requests.
-
-The data files contain plate numbers and payout amounts.
+## Rebuild
+```
+cd data
+python3 -c "R=[x.split('|') for x in open('rraw.txt').read().strip().split(';')]+[['']*4];S=[x.split('|') for x in open('s1.txt').read().strip().split(';')];open('data.py','w').write(f'R={R!r}\nS={S!r}\n')"
+PYTHONPATH=. python3 ../scripts/mk.py && PYTHONPATH=. python3 ../scripts/mkpay.py
+```
+Live dashboard: https://claude.ai/artifact/NxmKTdQGKoNTuY51FrGsYD
+See CLAUDE.md for all the rules.
 
 ## Slim down by 27 Nov tracker
 
