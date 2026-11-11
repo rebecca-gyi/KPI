@@ -1,0 +1,20 @@
+{
+  "title": "Motor quote submissions",
+  "datasets": {
+    "quotes": {
+      "title": "Quote submissions log",
+      "file": "data/quotes.csv",
+      "description": "Rabies Reference (quoted rows) joined to Sheet1 payout results by plate, from the Ad Hoc Motor Quotes sheet, as of 11 Nov 2026."
+    },
+    "payouts": {
+      "title": "Payout sheet (Sheet1)",
+      "file": "data/payouts.csv",
+      "description": "Snapshot of Sheet1 rows with a plate or item (plate, quoted date, settled month, amount due, remarks) from the Ad Hoc Motor Quotes sheet, as of 2 Nov 2026. Blank-plate rows are left out."
+    },
+    "emails": {
+      "title": "Quote emails to Keith",
+      "file": "data/emails.csv",
+      "description": "First reply sent in each Gmail thread with Keith (5 Aug to 10 Nov 2026): send time (Singapore time), who started the thread, plate, day the quote window opened (60 days before road tax expiry) and working days waited. No names or email content."
+    }
+  }
+}
