@@ -1,0 +1,452 @@
+<style>
+.qx{font-family:var(--font-anthropic-sans);display:flex;flex-direction:column;gap:var(--cds-gap-lg)}
+.qx h1{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);margin:0}
+.qx .lead{color:var(--color-fg-muted);margin:var(--cds-gap-xs) 0 0}
+.qx .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr));gap:var(--cds-gap-md)}
+.qx .card{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-lg);min-width:0}
+.qx .lbl{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.qx .big{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);font-variant-numeric:tabular-nums;margin-top:var(--cds-gap-xs)}
+.qx .ok{color:var(--color-ok)} .qx .bad{color:var(--color-bad)}
+.qx h2{font-size:var(--cds-font-size-heading);font-weight:var(--cds-font-weight-medium);margin:0}
+.qx .note{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);margin:var(--cds-gap-xs) 0 var(--cds-gap-md)}
+.qx .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr));gap:var(--cds-gap-md)}
+.qx .chart{position:relative;min-height:240px}
+.qx table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:var(--cds-font-size-body)}
+.qx th,.qx td{text-align:left;padding:var(--cds-pad-xs) var(--cds-pad-sm);border-bottom:1px solid var(--color-border-line)}
+.qx th{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);font-weight:var(--cds-font-weight-medium)}
+.qx td.n,.qx th.n{text-align:right}
+.qx .tip{position:absolute;pointer-events:none;background:var(--cds-surface-popover);border:1px solid var(--cds-border);border-radius:var(--cds-radius);box-shadow:var(--cds-shadow-popover);padding:var(--cds-pad-xs) var(--cds-pad-sm);font-size:var(--cds-font-size-caption);display:none;white-space:nowrap}
+.qx .tip .d{color:var(--cds-text-secondary)}
+.qx .scroll{max-height:24rem;overflow:auto}
+.qx .scroll th{position:sticky;top:0;background:var(--color-panel)}
+[data-dash-source-state=empty]{color:transparent}
+.qx .goal{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));gap:var(--cds-gap-md)}
+.qx .bar{height:10px;border-radius:5px;background:var(--cds-chart-grid);overflow:hidden;margin-top:var(--cds-gap-sm)}
+.qx .bar>i{display:block;height:100%;border-radius:5px;background:var(--color-ok);width:0}
+.qx .of{font-family:var(--font-anthropic-sans);font-size:var(--cds-font-size-body);color:var(--color-fg-muted)}
+.qx .msg{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);margin-top:var(--cds-gap-xs)}
+.qx .cheer{font-size:var(--cds-font-size-body);margin:0}
+.qx .typegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr));gap:var(--cds-gap-md)}
+.qx .legend{display:flex;flex-wrap:wrap;gap:var(--cds-gap-sm) var(--cds-gap-md);font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);margin-top:var(--cds-gap-sm)}
+.qx .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+</style>
+<div class="qx">
+  <header>
+    <h1 id="title">Motor quote submissions</h1>
+    <p class="lead" id="takeaway" data-source="totals" data-field="summary">—</p>
+  </header>
+  <section id="target">
+    <h2>Target: 10 quotes a day</h2>
+    <p class="cheer" id="cheer" data-source="target" data-field="cheer">—</p>
+    <div class="goal" style="margin-top:var(--cds-gap-md)">
+      <div class="card"><div class="lbl" data-source="target" data-field="day_label">—</div>
+        <div class="big"><span data-source="target" data-field="day_count">—</span> <span class="of">/ 10</span></div>
+        <div class="bar"><i id="bar-day"></i></div><div class="msg" data-source="target" data-field="day_msg">—</div></div>
+      <div class="card"><div class="lbl" data-source="target" data-field="week_label">—</div>
+        <div class="big"><span data-source="target" data-field="week_count">—</span> <span class="of">/ 50</span></div>
+        <div class="bar"><i id="bar-week"></i></div><div class="msg" data-source="target" data-field="week_msg">—</div></div>
+      <div class="card"><div class="lbl">Personal best day</div>
+        <div class="big" data-source="target" data-field="best_count">—</div>
+        <div class="msg" data-source="target" data-field="best_msg">—</div></div>
+      <div class="card"><div class="lbl">Days you hit 10+</div>
+        <div class="big" data-source="target" data-field="days_hit">—</div>
+        <div class="msg" data-source="target" data-field="hit_msg">—</div></div>
+    </div>
+  </section>
+  <section id="goal">
+    <h2>Monthly goal: 10 quotes every working day</h2>
+    <p class="cheer" data-source="month_goal" data-field="cheer">—</p>
+    <div class="goal" style="margin-top:var(--cds-gap-md)">
+      <div class="card"><div class="lbl" data-source="month_goal" data-field="goal_label">—</div>
+        <div class="big" data-source="month_goal" data-field="goal_money">—</div>
+        <div class="msg" data-source="month_goal" data-field="goal_msg">—</div></div>
+      <div class="card"><div class="lbl">Done so far this month</div>
+        <div class="big"><span data-source="month_goal" data-field="done">—</span> <span class="of" data-source="month_goal" data-field="of_goal">—</span></div>
+        <div class="bar"><i id="bar-month"></i></div><div class="msg" data-source="month_goal" data-field="earned_msg">—</div></div>
+      <div class="card"><div class="lbl">At your current pace</div>
+        <div class="big" data-source="month_goal" data-field="pace_money">—</div>
+        <div class="msg" data-source="month_goal" data-field="pace_msg">—</div></div>
+      <div class="card"><div class="lbl" data-source="month_goal" data-field="next_label">—</div>
+        <div class="big ok" data-source="month_goal" data-field="next_money">—</div>
+        <div class="msg" data-source="month_goal" data-field="next_msg">—</div></div>
+    </div>
+  </section>
+  <div class="tiles">
+    <div class="card"><div class="lbl">Quotes submitted</div><div class="big" data-source="totals" data-field="submitted">—</div></div>
+    <div class="card"><div class="lbl">Average per working day</div><div class="big" data-source="totals" data-field="per_day">—</div></div>
+    <div class="card"><div class="lbl">Correct (verified)</div><div class="big ok" data-source="totals" data-field="right">—</div></div>
+    <div class="card"><div class="lbl">Wrong (errors)</div><div class="big bad" data-source="totals" data-field="wrong">—</div></div>
+    <div class="card"><div class="lbl" data-source="totals" data-field="acc_label">Accuracy this month</div><div class="big" data-source="totals" data-field="month_accuracy">—</div><div style="font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);margin-top:var(--cds-gap-xs)" data-source="totals" data-field="acc_msg">—</div></div>
+  </div>
+  <section id="income" class="card">
+    <h2>Income</h2>
+    <p class="note">From the Amount Due column on Sheet1: $18 per verified quote, $6 per quote with errors, minus $12 clawbacks, plus commission. Quotes are paid the month after they're quoted.</p>
+    <div class="tiles">
+      <div><div class="lbl" data-source="income_totals" data-field="month_label">Earned this month</div><div class="big" data-source="income_totals" data-field="month_total">—</div></div>
+      <div><div class="lbl">Already paid</div><div class="big ok" data-source="income_totals" data-field="paid">—</div></div>
+      <div><div class="lbl">Still to be paid (Nov quotes)</div><div class="big" data-source="income_totals" data-field="unsettled">—</div></div>
+      <div><div class="lbl">Lost to errors</div><div class="big bad" data-source="income_totals" data-field="lost">—</div></div>
+    </div>
+    <div class="tiles" style="margin-top:var(--cds-gap-md)">
+      <div><div class="lbl" data-source="pay_compare" data-field="rabies_label">—</div><div class="big" data-source="pay_compare" data-field="rabies_amount">—</div><div class="msg" data-source="pay_compare" data-field="rabies_msg">—</div></div>
+      <div><div class="lbl" data-source="pay_compare" data-field="sheet_label">—</div><div class="big" data-source="pay_compare" data-field="sheet_amount">—</div><div class="msg" data-source="pay_compare" data-field="sheet_msg">—</div></div>
+      <div><div class="lbl">Difference (Sheet1 minus Rabies)</div><div class="big" data-source="pay_compare" data-field="diff">—</div></div>
+    </div>
+    <table data-source="income_monthly" data-row-key="quote_month" style="margin-top:var(--cds-gap-md)">
+      <thead><tr><th data-field="quote_month">Quoted in</th><th data-field="settled">Paid in</th><th class="n" data-field="quotes">Quote fees</th><th class="n" data-field="commission">Commission</th><th class="n" data-field="corrections">Clawbacks</th><th class="n" data-field="total">Total</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+  <div class="grid2">
+    <section class="card" id="monthly">
+      <h2>By month</h2>
+      <p class="note">Submissions by quote date; per day is averaged over working days (Mon to Fri), including days with no quotes. Right and wrong from the payout sheet (Sheet1). Latest month runs to 11 Nov.</p>
+      <table data-source="monthly" data-row-key="month">
+        <thead><tr><th data-field="month">Month</th><th class="n" data-field="submitted">Submitted</th><th class="n" data-field="days">Working days</th><th class="n" data-field="per_day">Per day</th><th class="n" data-field="right">Right</th><th class="n" data-field="wrong">Wrong</th><th class="n" data-field="not_paid">Not paid</th><th class="n" data-field="accuracy">Accuracy</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+    <section class="card" id="daily">
+      <h2>Per day</h2>
+      <p class="note">Quotes submitted on each day you submitted at least one. The dashed line is your target of 10.</p>
+      <div class="chart" data-source="daily"><div class="tip"></div></div>
+    </section>
+  </div>
+  <section id="bytype">
+    <h2>By vehicle type</h2>
+    <div class="typegrid" style="margin-top:var(--cds-gap-md)">
+      <div class="card"><h2>Share of quotes</h2><p class="note">All quotes logged in Rabies Reference, by category.</p>
+        <div class="chart" id="type-donut" data-source="by_type" style="min-height:240px"><div class="tip"></div></div></div>
+      <div class="card"><h2>Accuracy by type</h2><p class="note">Right and wrong from Sheet1; accuracy = right ÷ (right + wrong). Not paid yet is shown in grey.</p>
+        <div class="chart" id="type-acc" data-source="by_type" style="min-height:200px"><div class="tip"></div></div>
+        <div class="legend"><span><i style="background:var(--color-ok)"></i>Right</span><span><i style="background:var(--color-bad)"></i>Wrong</span><span><i style="background:var(--cds-chart-muted)"></i>Not paid yet</span></div></div>
+    </div>
+  </section>
+  <section class="card" id="speed">
+    <h2>Speed</h2>
+    <p class="note">From your emails to Keith. Minutes per quote is the gap between one quote email and the next on the same day (gaps over 2 hours left out, as breaks). Turnaround counts working days from when a quote could start: the later of Keith's request and 60 days before road tax expiry (insurers won't quote earlier). Weekends don't count. Covers threads Keith started, plus threads you started where his request email for that plate or company could be found. Requests sent in bulk emails, attachments or WhatsApp can't be timed, so those quotes only count towards minutes per quote.</p>
+    <div class="tiles">
+      <div><div class="lbl">Minutes per quote (median)</div><div class="big" data-source="speed_totals" data-field="min_per_quote">—</div></div>
+      <div><div class="lbl">Replied within 1 working day</div><div class="big" data-source="speed_totals" data-field="within1">—</div></div>
+      <div><div class="lbl">Replied same working day</div><div class="big" data-source="speed_totals" data-field="same_day">—</div></div>
+      <div><div class="lbl">Fastest day (4+ quotes)</div><div class="big ok" data-source="speed_totals" data-field="best_min">—</div><div class="msg" data-source="speed_totals" data-field="best_msg">—</div></div>
+    </div>
+    <table data-source="speed_monthly" data-row-key="month" style="margin-top:var(--cds-gap-md)">
+      <thead><tr><th data-field="month">Month</th><th class="n" data-field="emails">Quote emails</th><th class="n" data-field="min_per_quote">Min per quote</th><th class="n" data-field="same_day">Same day</th><th class="n" data-field="within1">Within 1 day</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+  <section class="card" id="issues">
+    <h2>Quotes marked wrong or not paid this pay month</h2>
+    <p class="note">Only quotes from the month not yet paid out. Months already paid are left out.</p>
+    <div class="scroll">
+      <table data-source="issues" data-row-key="no">
+        <thead><tr><th data-field="no">No</th><th data-field="plate">Plate</th><th data-field="quote_date">Quote date</th><th data-field="category">Category</th><th data-field="result">Result</th><th data-field="note">Note</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+<script>
+const money = v => (v < 0 ? '-$' : '$') + Math.abs(v).toFixed(2);
+const monthName = m => d3.utcFormat('%b %Y')(new Date(m + '-01'));
+dash.calc('daily', {
+  title: 'Quotes per day', description: 'Count of submissions per quote date.', inputs: ['quotes'],
+  fn: (quotes) => Array.from(d3.rollup(quotes, v => v.length, q => q.quote_date), ([day, n]) => ({day, n})).sort((a, b) => a.day < b.day ? -1 : 1)
+});
+const wdBetween = (a, b) => { let n = 0; for (let d = new Date(a + 'T00:00:00Z'); d <= new Date(b + 'T00:00:00Z'); d = d3.utcDay.offset(d, 1)) { const w = d.getUTCDay(); if (w > 0 && w < 6) n++; } return Math.max(1, n); };
+const iso = d3.utcFormat('%Y-%m-%d');
+dash.calc('monthly', {
+  title: 'Quotes per month', description: 'Submissions, working days (Mon to Fri, from your first quote to your latest) and results per month.', inputs: ['quotes'],
+  fn: (quotes) => { const first = d3.min(quotes, q => q.quote_date), last = d3.max(quotes, q => q.quote_date); return Array.from(d3.group(quotes, q => q.month), ([month, v]) => {
+    const ms = month + '-01', me = iso(d3.utcDay.offset(d3.utcMonth.offset(new Date(ms + 'T00:00:00Z'), 1), -1));
+    const days = wdBetween(ms > first ? ms : first, me < last ? me : last);
+    return {month, submitted: v.length, days, per_day: Math.round(v.length / days * 10) / 10,
+      right: v.filter(q => q.result === 'Right').length, wrong: v.filter(q => q.result === 'Wrong').length,
+      not_paid: v.filter(q => q.result === 'Not paid').length, accuracy: (() => { const r = v.filter(q => q.result === 'Right').length, w = v.filter(q => q.result === 'Wrong').length; return r + w ? (r / (r + w) * 100).toFixed(1) + '%' : '—'; })()};
+  }).sort((a, b) => a.month < b.month ? -1 : 1); }
+});
+dash.calc('totals', {
+  title: 'Overall totals', description: 'Totals, average per working day (Mon to Fri from your first quote to your latest) and accuracy.', inputs: ['quotes'],
+  fn: (quotes) => {
+    const days = wdBetween(d3.min(quotes, q => q.quote_date), d3.max(quotes, q => q.quote_date));
+    const right = quotes.filter(q => q.result === 'Right').length, wrong = quotes.filter(q => q.result === 'Wrong').length;
+    const notPaid = quotes.length - right - wrong;
+    const acc = (right / (right + wrong) * 100).toFixed(1) + '%';
+    const lm = d3.max(quotes, q => q.month), mq = quotes.filter(q => q.month === lm);
+    const mr = mq.filter(q => q.result === 'Right').length, mw = mq.filter(q => q.result === 'Wrong').length;
+    const month_accuracy = mr + mw ? (mr / (mr + mw) * 100).toFixed(1) + '%' : '—';
+    const acc_label = 'Accuracy, ' + d3.utcFormat('%B')(new Date(lm + '-01T00:00:00Z'));
+    const acc_msg = `${mr} right, ${mw} wrong this month · all time ${acc}`;
+    return [{submitted: quotes.length, days, per_day: (quotes.length / days).toFixed(1), right, wrong, not_paid: notPaid, accuracy: acc, month_accuracy, acc_label, acc_msg,
+      summary: `${quotes.length} quotes over ${days} working days; ${right} correct and ${wrong} wrong (${acc} accuracy), ${notPaid} not on the payout sheet.`}];
+  }
+});
+dash.calc('weekly', {
+  title: 'Quotes per week', description: 'Submissions, working days (Mon to Fri) and results per Monday-to-Sunday week.', inputs: ['quotes'],
+  fn: (quotes) => { const first = d3.min(quotes, q => q.quote_date), last = d3.max(quotes, q => q.quote_date); return Array.from(d3.group(quotes, q => d3.utcFormat('%Y-%m-%d')(d3.utcMonday.floor(new Date(q.quote_date)))), ([week_start, v]) => {
+    const we = iso(d3.utcDay.offset(new Date(week_start + 'T00:00:00Z'), 4));
+    const days = wdBetween(week_start > first ? week_start : first, we < last ? we : last);
+    return {week_start, submitted: v.length, days, per_day: Math.round(v.length / days * 10) / 10,
+      right: v.filter(q => q.result === 'Right').length, wrong: v.filter(q => q.result === 'Wrong').length,
+      not_paid: v.filter(q => q.result === 'Not paid').length};
+  }).sort((a, b) => a.week_start < b.week_start ? -1 : 1); }
+});
+const sum = (v) => Math.round(d3.sum(v, r => Number(r.amount)) * 100) / 100;
+dash.calc('income_totals', {
+  title: 'Income totals', description: 'Total, paid, unpaid and amount lost to errors.', inputs: ['payouts'],
+  fn: (payouts) => {
+    const lostErr = payouts.filter(r => r.type === 'Quote (error)' && Number(r.amount) < 18).length * 12;
+    const claw = -d3.sum(payouts.filter(r => r.type === 'Correction'), r => Number(r.amount));
+    const lm = d3.max(payouts, r => r.quote_month), month_total = sum(payouts.filter(r => r.quote_month === lm));
+    const month_label = 'Earned in ' + d3.utcFormat('%B')(new Date(lm + '-01T00:00:00Z'));
+    return [{month_total, month_label, total: sum(payouts), paid: sum(payouts.filter(r => r.settled !== 'Unsettled')), unsettled: sum(payouts.filter(r => r.settled === 'Unsettled')), lost: lostErr + claw}];
+  }
+});
+dash.calc('income_monthly', {
+  title: 'Income by month', description: 'Payout per quote month, split by fees, commission and clawbacks.', inputs: ['payouts'],
+  fn: (payouts) => Array.from(d3.group(payouts, r => r.quote_month), ([quote_month, v]) => ({
+    quote_month, settled: v[0].settled,
+    quotes: sum(v.filter(r => r.type.startsWith('Quote'))), commission: sum(v.filter(r => r.type === 'Commission')),
+    corrections: sum(v.filter(r => r.type === 'Correction')), total: sum(v)
+  })).sort((a, b) => a.quote_month < b.quote_month ? -1 : 1)
+});
+dash.calc('weekly_income', {
+  title: 'Income by week', description: 'Payout per Monday-to-Sunday week of quote date.', inputs: ['payouts'],
+  fn: (payouts) => Array.from(d3.group(payouts, r => r.week_start), ([week_start, v]) => ({week_start, income: sum(v)}))
+});
+const TARGET = 10, FEE = 18;
+dash.calc('target', {
+  title: 'Progress to target', description: 'Latest day and week against 10 quotes a day (50 a week), best day and days at target. Each quote is counted at $18.', inputs: ['daily', 'weekly'],
+  fn: (daily, weekly) => {
+    const last = daily[daily.length - 1], best = daily.reduce((a, b) => b.n > a.n ? b : a, daily[0]);
+    const wk = weekly[weekly.length - 1], bestWk = weekly.reduce((a, b) => b.submitted > a.submitted ? b : a, weekly[0]);
+    const thu = d3.utcDay.offset(new Date(wk.week_start), 3);
+    const fmt = d3.utcFormat('%-d %b'), left = TARGET - last.n, wLeft = TARGET * 5 - wk.submitted;
+    const hit = daily.filter(d => d.n >= TARGET).length;
+    const cheer = last.n >= TARGET ? `Target hit on ${fmt(new Date(last.day))}. Brilliant work, keep the streak going!`
+      : last.n > best.n - 1 && last.n === best.n ? `${fmt(new Date(last.day))} tied your best day ever. ${left} more and you hit 10!`
+      : `${left} more quotes on your next day gets you to 10, worth another $${left * FEE}. Your best is ${best.n}: beat it with ${best.n + 1}.`;
+    return [{
+      day_label: 'Latest day, ' + fmt(new Date(last.day)), day_count: last.n, day_pct: Math.min(1, last.n / TARGET),
+      day_msg: left > 0 ? `${left} more to target, +$${left * FEE}` : `Target hit! $${last.n * FEE} earned`,
+      week_label: d3.utcFormat('%b')(thu) + ' week ' + Math.ceil(thu.getUTCDate() / 7) + ' so far', week_count: wk.submitted, week_pct: Math.min(1, wk.submitted / (TARGET * 5)),
+      week_msg: wLeft > 0 ? `${wLeft} to go · best week so far: ${bestWk.submitted}` : 'Weekly target hit!',
+      best_count: best.n, best_msg: `${fmt(new Date(best.day))} · next milestone: ${best.n + 1} in a day`,
+      days_hit: hit, hit_msg: hit ? `Keep it up: each 10-quote day is $${TARGET * FEE}` : `Your first 10-quote day is $${TARGET * FEE} in one day`,
+      cheer
+    }];
+  }
+});
+const gapsByDay = (rows) => {
+  const out = [];
+  for (const [day, v] of d3.group(rows, r => r.sent_day)) {
+    const t = v.map(r => new Date(r.sent_at + ':00Z')).sort((a, b) => a - b);
+    for (let i = 1; i < t.length; i++) { const g = (t[i] - t[i - 1]) / 60000; if (g <= 120) out.push({day, g}); }
+  }
+  return out;
+};
+const pctStr = (a, b) => b ? Math.round(a / b * 100) + '%' : '—';
+dash.calc('speed_monthly', {
+  title: 'Speed by month', description: 'Median minutes between quote emails on the same day, and share replied the same or next working day after the quote could start, per month.', inputs: ['emails'],
+  fn: (emails) => Array.from(d3.group(emails, r => r.month), ([month, v]) => {
+    const g = gapsByDay(v).map(x => x.g), req = v.filter(r => r.wait_workdays !== '');
+    return {month, emails: v.length, min_per_quote: g.length ? Math.round(d3.median(g)) : '—',
+      same_day: pctStr(req.filter(r => Number(r.wait_workdays) === 0).length, req.length),
+      within1: pctStr(req.filter(r => Number(r.wait_workdays) <= 1).length, req.length)};
+  }).sort((a, b) => a.month < b.month ? -1 : 1)
+});
+dash.calc('speed_totals', {
+  title: 'Speed overall', description: 'Overall median minutes per quote, share replied the same or next working day after the quote could start, and the fastest day with 4+ quotes.', inputs: ['emails'],
+  fn: (emails) => {
+    const gaps = gapsByDay(emails), req = emails.filter(r => r.wait_workdays !== '');
+    const days = Array.from(d3.group(emails, r => r.sent_day), ([day, v]) => ({day, n: v.length, m: d3.mean(gaps.filter(x => x.day === day), x => x.g)})).filter(d => d.n >= 4 && d.m);
+    const best = days.reduce((a, b) => !a || b.m < a.m ? b : a, null);
+    return [{min_per_quote: Math.round(d3.median(gaps, x => x.g)) + ' min', within1: pctStr(req.filter(r => Number(r.wait_workdays) <= 1).length, req.length),
+      same_day: pctStr(req.filter(r => Number(r.wait_workdays) === 0).length, req.length),
+      best_min: best ? Math.round(best.m) + ' min' : '—', best_msg: best ? `${best.n} quotes on ${d3.utcFormat('%-d %b')(new Date(best.day))}` : ''}];
+  }
+});
+const workdays = (y, m, upto) => { let n = 0; const last = upto || new Date(Date.UTC(y, m + 1, 0)).getUTCDate(); for (let d = 1; d <= last; d++) { const w = new Date(Date.UTC(y, m, d)).getUTCDay(); if (w > 0 && w < 6) n++; } return n; };
+dash.calc('month_goal', {
+  title: 'Monthly goal', description: 'Goal of 10 quotes per working day (Mon to Fri) at $18 each for the latest month in your log, progress, pace and next month\'s goal.', inputs: ['quotes', 'payouts'],
+  fn: (quotes, payouts) => {
+    const latest = d3.max(quotes, q => q.quote_date), month = latest.slice(0, 7);
+    const y = +month.slice(0, 4), m = +month.slice(5, 7) - 1, day = +latest.slice(8, 10);
+    const wdAll = workdays(y, m), wdSoFar = workdays(y, m, day), wdLeft = wdAll - wdSoFar;
+    const goal = TARGET * wdAll, done = quotes.filter(q => q.month === month).length;
+    const earned = Math.round(d3.sum(payouts.filter(p => p.quote_month === month), p => Number(p.amount)) * 100) / 100;
+    const pace = Math.round(done / wdSoFar * wdAll), left = Math.max(0, goal - done);
+    const nm = new Date(Date.UTC(y, m + 1, 1)), wdNext = workdays(nm.getUTCFullYear(), nm.getUTCMonth());
+    const mName = d3.utcFormat('%B')(new Date(Date.UTC(y, m, 1))), nName = d3.utcFormat('%B')(nm);
+    const usd = v => '$' + d3.format(',')(Math.round(v));
+    return [{
+      goal_label: `${mName} goal: ${wdAll} working days × 10`, goal_money: usd(goal * FEE), goal_msg: `${goal} quotes at $${FEE} each`,
+      done, of_goal: `/ ${goal}`, pct: Math.min(1, done / goal), earned_msg: `${usd(earned)} earned so far · ${left} quotes to go`,
+      pace_money: usd(pace * FEE), pace_msg: `about ${pace} quotes at ${(done / wdSoFar).toFixed(1)} a day`,
+      next_label: `${nName} goal: ${wdNext} working days × 10`, next_money: usd(TARGET * wdNext * FEE), next_msg: `${TARGET * wdNext} quotes · a fresh start`,
+      cheer: `Hitting 10 a day is worth ${usd(goal * FEE)} in ${mName}, ${usd(goal * FEE - pace * FEE)} more than your current pace. Every extra quote a day adds about ${usd(wdAll * FEE)} a month.`
+    }];
+  }
+});
+dash.calc('pay_compare', {
+  title: 'This month: Sheet1 vs Rabies', description: 'For the latest month in your log: quotes logged in Rabies Reference at $18 each, against the quote fees on Sheet1 for that month (commission and clawbacks left out).', inputs: ['quotes', 'payouts'],
+  fn: (quotes, payouts) => {
+    const month = d3.max(quotes, q => q.quote_date).slice(0, 7), mName = d3.utcFormat('%B')(new Date(month + '-01T00:00:00Z'));
+    const q = quotes.filter(r => r.month === month), p = payouts.filter(r => r.quote_month === month && r.type.startsWith('Quote'));
+    const ra = q.length * FEE, sa = Math.round(d3.sum(p, r => Number(r.amount)) * 100) / 100, d = Math.round((sa - ra) * 100) / 100;
+    return [{rabies_label: `${mName} in Rabies Reference`, rabies_amount: money(ra), rabies_msg: `${q.length} quotes × $${FEE}`,
+      sheet_label: `${mName} quote fees on Sheet1`, sheet_amount: money(sa), sheet_msg: 'Excludes commission and clawbacks', diff: (d > 0 ? '+' : '') + money(d)}];
+  }
+});
+dash.calc('by_type', {
+  title: 'Quotes by vehicle type', description: 'Quotes per category with right, wrong and not-paid counts, accuracy (right ÷ right + wrong) and share of all quotes.', inputs: ['quotes'],
+  fn: (quotes) => {
+    const label = c => ({'Private Comp Car': 'Company car', 'BUS': 'Bus'})[c] || c;
+    return Array.from(d3.group(quotes, q => label(q.category)), ([type, v]) => {
+      const right = v.filter(q => q.result === 'Right').length, wrong = v.filter(q => q.result === 'Wrong').length;
+      return {type, quotes: v.length, right, wrong, not_paid: v.length - right - wrong,
+        accuracy: right + wrong ? Math.round(right / (right + wrong) * 1000) / 10 : null, share: Math.round(v.length / quotes.length * 1000) / 10};
+    }).sort((a, b) => b.quotes - a.quotes);
+  }
+});
+dash.calc('issues', {
+  title: 'Wrong or unpaid quotes, current pay month', description: 'Submissions not counted as correct, only from quote months whose payout is not settled yet.', inputs: ['quotes', 'payouts'],
+  fn: (quotes, payouts) => {
+    const paidMonths = new Set(payouts.filter(p => p.settled !== 'Unsettled').map(p => p.quote_month)), anyMonths = new Set(payouts.map(p => p.quote_month));
+    const open = new Set(quotes.map(q => q.month).filter(m => !anyMonths.has(m) || !paidMonths.has(m) || payouts.some(p => p.quote_month === m && p.settled === 'Unsettled')));
+    return quotes.filter(q => q.result !== 'Right' && open.has(q.month)).map(q => ({no: q.no, plate: q.plate, quote_date: q.quote_date, category: q.category, result: q.result, note: q.note}));
+  }
+});
+
+function fillTable(sel, id, cols) {
+  const d = dash.data(id), tb = document.querySelector(sel + ' tbody');
+  tb.textContent = '';
+  if (d.status !== 'ok') return;
+  for (const r of d.data) {
+    const tr = document.createElement('tr');
+    for (const [c, fmt, cls] of cols) { const td = document.createElement('td'); td.textContent = fmt ? fmt(r[c]) : r[c]; if (cls) td.className = cls; tr.appendChild(td); }
+    tb.appendChild(tr);
+  }
+}
+
+dash.onData(() => {
+  const tg = dash.data('target'), t0 = tg.status === 'ok' ? tg.data[0] : null;
+  document.querySelectorAll('[data-source="target"]').forEach(el => { el.textContent = t0 ? String(t0[el.dataset.field]) : '—'; });
+  document.getElementById('bar-day').style.width = t0 ? (t0.day_pct * 100) + '%' : '0';
+  document.getElementById('bar-week').style.width = t0 ? (t0.week_pct * 100) + '%' : '0';
+  const mg = dash.data('month_goal'), g0 = mg.status === 'ok' ? mg.data[0] : null;
+  document.querySelectorAll('[data-source="month_goal"]').forEach(el => { el.textContent = g0 ? String(g0[el.dataset.field]) : '—'; });
+  document.getElementById('bar-month').style.width = g0 ? (g0.pct * 100) + '%' : '0';
+  const t = dash.data('totals');
+  document.querySelectorAll('[data-source="totals"]').forEach(el => {
+    el.textContent = t.status === 'ok' && t.data[0] ? String(t.data[0][el.dataset.field]) : '—';
+  });
+  const m = dash.data('monthly');
+  const tb = document.querySelector('#monthly tbody'); tb.textContent = '';
+  if (m.status === 'ok') for (const r of m.data) {
+    const tr = document.createElement('tr'); tr.dataset.key = r.month;
+    [[monthName(r.month)], [r.submitted, 'n'], [r.days, 'n'], [r.per_day, "n"], [r.right, 'n'], [r.wrong, 'n'], [r.not_paid, 'n'], [r.accuracy, 'n']].forEach(([v, c]) => {
+      const td = document.createElement('td'); td.textContent = v; if (c) td.className = c; tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  }
+  const it = dash.data('income_totals');
+  document.querySelectorAll('[data-source="income_totals"]').forEach(el => { const v = it.status === 'ok' && it.data[0] ? it.data[0][el.dataset.field] : null; el.textContent = v == null ? '—' : (typeof v === 'string' ? v : money(v)); });
+  const im = dash.data('income_monthly'), ib = document.querySelector('#income tbody'); ib.textContent = '';
+  if (im.status === 'ok') for (const r of im.data) {
+    const tr = document.createElement('tr'); tr.dataset.key = r.quote_month;
+    [[monthName(r.quote_month)], [r.settled === 'Unsettled' ? 'Not yet' : r.settled], [money(r.quotes), 'n'], [money(r.commission), 'n'], [money(r.corrections), 'n'], [money(r.total), 'n']].forEach(([v, c]) => {
+      const td = document.createElement('td'); td.textContent = v; if (c) td.className = c; tr.appendChild(td);
+    });
+    ib.appendChild(tr);
+  }
+  const sp = dash.data('speed_totals'), s0 = sp.status === 'ok' ? sp.data[0] : null;
+  document.querySelectorAll('[data-source="speed_totals"]').forEach(el => { el.textContent = s0 ? String(s0[el.dataset.field]) : '—'; });
+  const sm = dash.data('speed_monthly'), sb = document.querySelector('#speed tbody'); sb.textContent = '';
+  if (sm.status === 'ok') for (const r of sm.data) {
+    const tr = document.createElement('tr'); tr.dataset.key = r.month;
+    [[monthName(r.month)], [r.emails, 'n'], [r.min_per_quote, 'n'], [r.same_day, 'n'], [r.within1, 'n']].forEach(([v, c]) => {
+      const td = document.createElement('td'); td.textContent = v; if (c) td.className = c; tr.appendChild(td);
+    });
+    sb.appendChild(tr);
+  }
+  const pc = dash.data('pay_compare'), p0 = pc.status === 'ok' ? pc.data[0] : null;
+  document.querySelectorAll('[data-source="pay_compare"]').forEach(el => { el.textContent = p0 ? String(p0[el.dataset.field]) : '—'; });
+  fillTable('#issues', 'issues', [['no'], ['plate'], ['quote_date', v => d3.utcFormat('%-d %b %Y')(new Date(v))], ['category'], ['result'], ['note']]);
+  drawDaily();
+  drawType();
+});
+
+function drawType() {
+  const d = dash.data('by_type');
+  const donut = document.getElementById('type-donut'), acc = document.getElementById('type-acc');
+  [donut, acc].forEach(b => b.querySelectorAll('svg').forEach(s => s.remove()));
+  if (d.status !== 'ok' || !d.data.length) return;
+  const rows = d.data, cols = rows.map((r, i) => dash.colors[i % dash.colors.length]);
+  // donut
+  { const tip = donut.querySelector('.tip'), W = Math.max(260, donut.clientWidth), H = 240, R = Math.min(H / 2 - 8, 100), cx = Math.min(W / 2, R + 10);
+    const svg = d3.select(donut).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`);
+    const arcs = d3.pie().sort(null).value(r => r.quotes)(rows), arc = d3.arc().innerRadius(R * 0.6).outerRadius(R);
+    const g = svg.append('g').attr('transform', `translate(${cx},${H / 2})`);
+    g.selectAll('path').data(arcs).join('path').attr('d', arc).attr('fill', (a, i) => cols[i]).attr('stroke', 'var(--color-panel)').attr('stroke-width', 2)
+      .on('mousemove', (ev, a) => { tip.textContent = ''; const x = document.createElement('div'); x.className = 'd'; x.textContent = a.data.type; const y = document.createElement('div'); y.textContent = `${a.data.quotes} quotes · ${a.data.share}%`; tip.append(x, y); tip.style.display = 'block'; const [px, py] = d3.pointer(ev, donut); tip.style.left = Math.min(px + 10, donut.clientWidth - tip.offsetWidth) + 'px'; tip.style.top = (py - 40) + 'px'; })
+      .on('mouseleave', () => { tip.style.display = 'none'; });
+    g.append('text').attr('text-anchor', 'middle').attr('dy', '-0.1em').attr('fill', 'var(--color-fg)').style('font-family', 'var(--font-anthropic-serif)').style('font-size', 'var(--cds-font-size-title)').text(d3.sum(rows, r => r.quotes));
+    g.append('text').attr('text-anchor', 'middle').attr('dy', '1.4em').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').text('quotes');
+    const lx = cx + R + 24; const leg = svg.append('g');
+    if (lx + 120 < W) rows.forEach((r, i) => { const y = H / 2 - rows.length * 13 + i * 26 + 10;
+      leg.append('rect').attr('x', lx).attr('y', y - 9).attr('width', 10).attr('height', 10).attr('rx', 2).attr('fill', cols[i]);
+      leg.append('text').attr('x', lx + 16).attr('y', y).attr('fill', 'var(--color-fg)').style('font-size', 'var(--cds-font-size-caption)').text(`${r.type}  ${r.quotes} (${r.share}%)`); });
+  }
+  // accuracy bars
+  { const tip = acc.querySelector('.tip'), W = Math.max(260, acc.clientWidth), bh = 22, gap = 14, m = {l: 0, r: 52, t: 4};
+    const svg = d3.select(acc).append('svg').attr('width', '100%');
+    const tmp = svg.append('g'); let lw = 0; rows.forEach(r => { const t = tmp.append('text').style('font-size', 'var(--cds-font-size-caption)').text(r.type); lw = Math.max(lw, t.node().getComputedTextLength()); }); tmp.remove();
+    m.l = lw + 10; const H = m.t + rows.length * (bh + gap); svg.attr('viewBox', `0 0 ${W} ${H}`);
+    const x = d3.scaleLinear([0, 1], [m.l, W - m.r]);
+    rows.forEach((r, i) => { const y = m.t + i * (bh + gap); let x0 = 0;
+      svg.append('text').attr('x', m.l - 8).attr('y', y + bh / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('fill', 'var(--color-fg)').style('font-size', 'var(--cds-font-size-caption)').text(r.type);
+      [['right', 'var(--color-ok)', 'Right'], ['wrong', 'var(--color-bad)', 'Wrong'], ['not_paid', 'var(--cds-chart-muted)', 'Not paid yet']].forEach(([k, c, lab]) => { const f = r[k] / r.quotes; if (!f) return;
+        svg.append('rect').attr('x', x(x0)).attr('y', y).attr('width', Math.max(1, x(x0 + f) - x(x0))).attr('height', bh).attr('fill', c)
+          .on('mousemove', ev => { tip.textContent = ''; const a = document.createElement('div'); a.className = 'd'; a.textContent = r.type; const b = document.createElement('div'); b.textContent = `${lab}: ${r[k]} of ${r.quotes}`; tip.append(a, b); tip.style.display = 'block'; const [px, py] = d3.pointer(ev, acc); tip.style.left = Math.min(px + 10, acc.clientWidth - tip.offsetWidth) + 'px'; tip.style.top = (py - 40) + 'px'; })
+          .on('mouseleave', () => { tip.style.display = 'none'; });
+        x0 += f; });
+      svg.append('text').attr('x', W - m.r + 6).attr('y', y + bh / 2).attr('dy', '0.35em').attr('fill', 'var(--color-fg)').style('font-family', 'var(--font-anthropic-serif)').style('font-size', 'var(--cds-font-size-body)').text(r.accuracy == null ? '—' : r.accuracy + '%');
+    });
+  }
+}
+function drawDaily() {
+  const box = document.querySelector('#daily .chart'), tip = box.querySelector('.tip');
+  box.querySelectorAll('svg').forEach(s => s.remove());
+  const d = dash.data('daily');
+  if (d.status !== 'ok' || !d.data.length) return;
+  const rows = d.data.map(r => ({date: new Date(r.day), day: r.day, n: r.n}));
+  const W = Math.max(280, box.clientWidth), H = 240, m = {t: 12, r: 8, b: 26, l: 28};
+  const x = d3.scaleBand(rows.map(r => r.day), [m.l, W - m.r]).padding(0.25);
+  const y = d3.scaleLinear([0, Math.max(TARGET, d3.max(rows, r => r.n))], [H - m.b, m.t]).nice();
+  const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`);
+  svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y).attr('stroke', 'var(--cds-chart-grid)');
+  const ya = svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(0).tickFormat(d3.format('d')));
+  ya.attr('font-size', null).attr('font-family', null).select('.domain').remove();
+  ya.selectAll('text').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)');
+  const step = Math.max(1, Math.ceil(rows.length / Math.floor((W - m.l) / 52)));
+  const xa = svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSize(0).tickValues(rows.filter((r, i) => i % step === 0).map(r => r.day)).tickFormat(s => d3.utcFormat('%b %-d')(new Date(s))));
+  xa.attr('font-size', null).attr('font-family', null).select('.domain').attr('stroke', 'var(--cds-chart-axis)');
+  xa.selectAll('text').attr('fill', 'var(--color-fg-muted)').attr('dy', '1em').style('font-size', 'var(--cds-font-size-caption)');
+  svg.append('g').selectAll('rect').data(rows).join('rect')
+    .attr('x', r => x(r.day)).attr('width', x.bandwidth()).attr('y', r => y(r.n)).attr('height', r => y(0) - y(r.n)).attr('rx', 3)
+    .attr('fill', r => r.n >= TARGET ? 'var(--color-ok)' : dash.colors[0])
+    .on('mousemove', (ev, r) => {
+      tip.textContent = '';
+      const a = document.createElement('div'); a.className = 'd'; a.textContent = d3.utcFormat('%a, %-d %b %Y')(r.date);
+      const b = document.createElement('div'); b.textContent = r.n + (r.n === 1 ? ' quote' : ' quotes');
+      tip.append(a, b); tip.style.display = 'block';
+      const [px, py] = d3.pointer(ev, box);
+      tip.style.left = Math.min(px + 10, box.clientWidth - tip.offsetWidth) + 'px'; tip.style.top = (py - 40) + 'px';
+    })
+    .on('mouseleave', () => { tip.style.display = 'none'; });
+  svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(TARGET)).attr('y2', y(TARGET)).attr('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '4 4');
+  svg.append('text').attr('x', W - m.r).attr('y', y(TARGET) - 4).attr('text-anchor', 'end').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').text('Target 10');
+}
+</script>
