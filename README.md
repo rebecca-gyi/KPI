@@ -11,3 +11,12 @@ Source: the "Motor quote submissions" dashboard (Claude artifact), exported as o
 What it tracks: quotes per day/week/month against a target of 10 a day, accuracy (right vs wrong), income from the payout sheet ($18 per verified quote, $6 with errors, -$12 clawbacks, plus commission), split by vehicle type, plus reply speed to Keith's requests.
 
 The data files contain plate numbers and payout amounts.
+
+## Slim down by 27 Nov tracker
+
+Source: the "Slim down by 27 Nov" dashboard (Claude artifact), exported as of 11 Nov 2026.
+
+- `slimdown/index.html`: the tracker page (daily calorie targets vs eaten, weight chart, day-by-day table). Like the motor dashboard, it is a fragment for the artifact dashboard runtime and will not render standalone.
+- `slimdown/data/slimdown-log.csv`: the plan and daily log (target kcal by day, eaten kcal, protein, steps, weight, notes). Calories and protein are estimates.
+
+The log contains personal health data (weight).
